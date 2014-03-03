@@ -280,6 +280,10 @@ func testConnRespondExceptionReceive(t *testing.T, exception error, trace Trace)
 	if exc.Description != expectedDescription {
 		t.Errorf("Expected exception description to be '%s' but it is '%s'", expectedDescription, exc.Description)
 	}
+
+	if trace != nil && exc.Trace == nil {
+		t.Errorf("Expected exception to contain trace")
+	}
 }
 
 func testConnRespondResponseReceive(t *testing.T, result interface{}, trace Trace) {
@@ -336,6 +340,10 @@ func testConnRespondResponseReceive(t *testing.T, result interface{}, trace Trac
 			t.Errorf("Expected response result to be %v, but it is %v", result, resp.Result)
 		}
 	}
+
+	if trace != nil && resp.Trace == nil {
+		t.Errorf("Expected response to contain trace")
+	}
 }
 
 // Test SendRequest and subsequent Receive.
@@ -374,13 +382,18 @@ func TestConnSendNotificationReceive(t *testing.T) {
 
 // Test RespondException and subsequent Receive.
 func TestConnRespondExceptionReceive(t *testing.T) {
-	// Test with non-Entangle error.
-	testConnRespondExceptionReceive(t, errors.New("non-entangle error"), nil)
+	for _, trace := range []Trace {
+		nil,
+		NewTrace("Test"),
+	} {
+		// Test with non-Entangle error.
+		testConnRespondExceptionReceive(t, errors.New("non-entangle error"), trace)
 
-	// Test with Entangle error.
-	def := NewExceptionDefinition("testing", "TestError")
+		// Test with Entangle error.
+		def := NewExceptionDefinition("testing", "TestError")
 
-	testConnRespondExceptionReceive(t, def.New("Something went awry"), nil)
+		testConnRespondExceptionReceive(t, def.New("Something went awry"), trace)
+	}
 }
 
 // Test RespondResponse and subsequent Receive.
