@@ -257,20 +257,20 @@ func testConnRespondExceptionReceive(t *testing.T, exception error, trace interf
 		return
 	}
 
-	var expectedNamespace, expectedName, expectedDescription string
+	var expectedDefinition, expectedName, expectedDescription string
 
-	if eErr, ok := exception.(Error); ok {
-		expectedNamespace = eErr.Namespace()
+	if eErr, ok := exception.(Exception); ok {
+		expectedDefinition = eErr.Definition()
 		expectedName = eErr.Name()
 		expectedDescription = eErr.Error()
 	} else {
-		expectedNamespace = "entangle"
+		expectedDefinition = "entangle"
 		expectedName = "InternalServerError"
 		expectedDescription = exception.Error()
 	}
 
-	if exc.Namespace != expectedNamespace {
-		t.Errorf("Expected exception namespace to be '%s' but it is '%s'", expectedNamespace, exc.Namespace)
+	if exc.Definition != expectedDefinition {
+		t.Errorf("Expected exception definition to be '%s' but it is '%s'", expectedDefinition, exc.Definition)
 	}
 
 	if exc.Name != expectedName {
@@ -378,7 +378,7 @@ func TestConnRespondExceptionReceive(t *testing.T) {
 	testConnRespondExceptionReceive(t, errors.New("non-entangle error"), nil)
 
 	// Test with Entangle error.
-	def := NewErrorDefinition("testing", "TestError")
+	def := NewExceptionDefinition("testing", "TestError")
 
 	testConnRespondExceptionReceive(t, def.New("Something went awry"), nil)
 }

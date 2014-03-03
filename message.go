@@ -93,8 +93,8 @@ type ExceptionMessage struct {
 	// Message ID.
 	messageId MessageId
 
-	// Namespace.
-	Namespace string
+	// Definition.
+	Definition string
 
 	// Name.
 	Name string
@@ -114,7 +114,7 @@ func (m *ExceptionMessage) Serialize() []interface{} {
 	return []interface{}{
 		ExceptionOpcode,
 		m.messageId,
-		m.Namespace,
+		m.Definition,
 		m.Name,
 		m.Description,
 		m.Trace,

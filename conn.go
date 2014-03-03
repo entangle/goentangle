@@ -162,7 +162,7 @@ func (c *Conn) deserializeMessage(opcode Opcode, messageId MessageId, messageDat
 			return
 		}
 
-		namespace, namespaceOk := messageData[0].(string)
+		definition, definitionOk := messageData[0].(string)
 		name, nameOk := messageData[1].(string)
 		description, descriptionOk := messageData[2].(string)
 		trace, traceOk := messageData[3].(interface{})
@@ -170,14 +170,14 @@ func (c *Conn) deserializeMessage(opcode Opcode, messageId MessageId, messageDat
 			traceOk = true
 		}
 
-		if !namespaceOk || !nameOk || !descriptionOk || !traceOk {
+		if !definitionOk || !nameOk || !descriptionOk || !traceOk {
 			err = ErrBadMessage
 			return
 		}
 
 		msg = &ExceptionMessage{
 			messageId:   messageId,
-			Namespace:   namespace,
+			Definition:  definition,
 			Name:        name,
 			Description: description,
 			Trace:       trace,
@@ -365,7 +365,7 @@ func (c *Conn) SendNotification(method string, arguments []interface{}) (Message
 // Respond with an exception.
 func (c *Conn) RespondException(exception error, responseTo Message, trace interface{}) error {
 	// Transform the error into an Entangle error if it is not already.
-	eErr, ok := exception.(Error)
+	eErr, ok := exception.(Exception)
 
 	if !ok {
 		eErr = InternalServerError.New(exception.Error())
@@ -374,7 +374,7 @@ func (c *Conn) RespondException(exception error, responseTo Message, trace inter
 	// Create and send the response.
 	return c.send(&ExceptionMessage{
 		messageId:   responseTo.MessageId(),
-		Namespace:   eErr.Namespace(),
+		Definition:  eErr.Definition(),
 		Name:        eErr.Name(),
 		Description: eErr.Error(),
 		Trace:       trace,
