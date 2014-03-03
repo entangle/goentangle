@@ -225,7 +225,7 @@ func testConnSendNotificationReceive(t *testing.T, method string, arguments []in
 	}
 }
 
-func testConnRespondExceptionReceive(t *testing.T, exception error, trace interface{}) {
+func testConnRespondExceptionReceive(t *testing.T, exception error, trace Trace) {
 	clientConn, serverConn := newTestingConnPipe()
 	defer clientConn.Close()
 	defer serverConn.Close()
@@ -282,7 +282,7 @@ func testConnRespondExceptionReceive(t *testing.T, exception error, trace interf
 	}
 }
 
-func testConnRespondResponseReceive(t *testing.T, result interface{}, trace interface{}) {
+func testConnRespondResponseReceive(t *testing.T, result interface{}, trace Trace) {
 	clientConn, serverConn := newTestingConnPipe()
 	defer clientConn.Close()
 	defer serverConn.Close()
@@ -385,9 +385,14 @@ func TestConnRespondExceptionReceive(t *testing.T) {
 
 // Test RespondResponse and subsequent Receive.
 func TestConnRespondResponseReceive(t *testing.T) {
-	testConnRespondResponseReceive(t, nil, nil)
-	testConnRespondResponseReceive(t, []interface{}{}, nil)
-	testConnRespondResponseReceive(t, "Test", nil)
-	testConnRespondResponseReceive(t, uint64(12346), nil)
-	testConnRespondResponseReceive(t, []interface{}{"Hello", int64(123)}, nil)
+	for _, trace := range []Trace {
+		nil,
+		NewTrace("Test"),
+	} {
+		testConnRespondResponseReceive(t, nil, trace)
+		testConnRespondResponseReceive(t, []interface{}{}, trace)
+		testConnRespondResponseReceive(t, "Test", trace)
+		testConnRespondResponseReceive(t, uint64(12346), trace)
+		testConnRespondResponseReceive(t, []interface{}{"Hello", int64(123)}, trace)
+	}
 }

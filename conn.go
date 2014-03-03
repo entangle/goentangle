@@ -142,10 +142,15 @@ func (c *Conn) deserializeMessage(opcode Opcode, messageId MessageId, messageDat
 			return
 		}
 
+		var trace Trace
+		var traceErr error
 		result, resultOk := messageData[0].(interface{})
-		trace, traceOk := messageData[1].(interface{})
+		rawTrace, rawTraceOk := messageData[1].(interface{})
+		if rawTraceOk && rawTrace != nil {
+			trace, traceErr = DeserializeTrace(rawTrace)
+		}
 
-		if (!resultOk && messageData[0] != nil) || (!traceOk && messageData[1] != nil) {
+		if (!resultOk && messageData[0] != nil) || (!rawTraceOk && messageData[1] != nil) || (traceErr != nil) {
 			err = ErrBadMessage
 			return
 		}
@@ -162,15 +167,17 @@ func (c *Conn) deserializeMessage(opcode Opcode, messageId MessageId, messageDat
 			return
 		}
 
+		var trace Trace
+		var traceErr error
 		definition, definitionOk := messageData[0].(string)
 		name, nameOk := messageData[1].(string)
 		description, descriptionOk := messageData[2].(string)
-		trace, traceOk := messageData[3].(interface{})
-		if !traceOk && messageData[3] == nil {
-			traceOk = true
+		rawTrace, rawTraceOk := messageData[3].(interface{})
+		if rawTraceOk {
+			trace, traceErr = DeserializeTrace(rawTrace)
 		}
 
-		if !definitionOk || !nameOk || !descriptionOk || !traceOk {
+		if !definitionOk || !nameOk || !descriptionOk || (!rawTraceOk && messageData[3] != nil) || (traceErr != nil) {
 			err = ErrBadMessage
 			return
 		}
@@ -363,7 +370,7 @@ func (c *Conn) SendNotification(method string, arguments []interface{}) (Message
 }
 
 // Respond with an exception.
-func (c *Conn) RespondException(exception error, responseTo Message, trace interface{}) error {
+func (c *Conn) RespondException(exception error, responseTo Message, trace Trace) error {
 	// Transform the error into an Entangle error if it is not already.
 	eErr, ok := exception.(Exception)
 
@@ -382,7 +389,7 @@ func (c *Conn) RespondException(exception error, responseTo Message, trace inter
 }
 
 // Respond with a response.
-func (c *Conn) RespondResponse(result interface{}, responseTo Message, trace interface{}) error {
+func (c *Conn) RespondResponse(result interface{}, responseTo Message, trace Trace) error {
 	// Create and send the response.
 	return c.send(&ResponseMessage{
 		messageId: responseTo.MessageId(),

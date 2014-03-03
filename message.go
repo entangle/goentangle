@@ -72,7 +72,7 @@ type ResponseMessage struct {
 	Result interface{}
 
 	// Trace.
-	Trace interface{}
+	Trace Trace
 }
 
 func (m *ResponseMessage) MessageId() MessageId {
@@ -80,11 +80,16 @@ func (m *ResponseMessage) MessageId() MessageId {
 }
 
 func (m *ResponseMessage) Serialize() []interface{} {
+	var serTrace interface{}
+	if m.Trace != nil {
+		serTrace = m.Trace.Serialize()
+	}
+
 	return []interface{}{
 		ResponseOpcode,
 		m.messageId,
 		m.Result,
-		m.Trace,
+		serTrace,
 	}
 }
 
@@ -103,7 +108,7 @@ type ExceptionMessage struct {
 	Description string
 
 	// Trace.
-	Trace interface{}
+	Trace Trace
 }
 
 func (m *ExceptionMessage) MessageId() MessageId {
@@ -111,12 +116,17 @@ func (m *ExceptionMessage) MessageId() MessageId {
 }
 
 func (m *ExceptionMessage) Serialize() []interface{} {
+	var serTrace interface{}
+	if m.Trace != nil {
+		serTrace = m.Trace.Serialize()
+	}
+
 	return []interface{}{
 		ExceptionOpcode,
 		m.messageId,
 		m.Definition,
 		m.Name,
 		m.Description,
-		m.Trace,
+		serTrace,
 	}
 }
