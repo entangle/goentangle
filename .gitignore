@@ -1,0 +1,5 @@
+# Dependencies.
+/src
+
+# Build output.
+/pkg
