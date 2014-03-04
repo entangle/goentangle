@@ -92,6 +92,7 @@ func (h *ClientConnHandler) Call(method string, args []interface{}, notify bool,
 		h.stateLock.Unlock()
 		return
 	}
+	h.stateLock.Unlock()
 
 	// Acquire the lock for the pending table.
 	h.pendingLock.Lock()
@@ -126,6 +127,7 @@ func (h *ClientConnHandler) Call(method string, args []interface{}, notify bool,
 	h.pendingLock.Unlock()
 
 	// Wait for the response.
+	defer close(done)
 	if resp = <- done; resp == nil {
 		err = ErrShutdown
 		return
