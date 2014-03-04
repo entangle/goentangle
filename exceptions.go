@@ -30,7 +30,7 @@ type ExceptionDefinition interface {
 
 // Entangle exception implementation.
 type entangleException struct {
-	definition   string
+	definition  string
 	name        string
 	description string
 }
@@ -50,7 +50,7 @@ func (e *entangleException) Error() string {
 // Entangle exception definition implementation.
 type entangleExceptionDefinition struct {
 	definition string
-	name      string
+	name       string
 }
 
 func (d *entangleExceptionDefinition) New(description string) Exception {

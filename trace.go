@@ -1,8 +1,8 @@
 package goentangle
 
 import (
-	"time"
 	"sync"
+	"time"
 )
 
 const (
@@ -54,11 +54,11 @@ func (t *traceImpl) Description() string {
 }
 
 func (t *traceImpl) Begin(description string) Trace {
-	return &traceImpl {
+	return &traceImpl{
 		description: description,
-		startTime: time.Now().UTC(),
-		parent: t,
-		subTraces: make([]Trace, 0),
+		startTime:   time.Now().UTC(),
+		parent:      t,
+		subTraces:   make([]Trace, 0),
 	}
 }
 
@@ -88,7 +88,7 @@ func (t *traceImpl) Serialize() (ser interface{}) {
 		serSubTraces[i] = subTrace.Serialize()
 	}
 
-	return []interface{} {
+	return []interface{}{
 		t.description,
 		t.startTime.UnixNano(),
 		t.endTime.UnixNano(),
@@ -98,10 +98,10 @@ func (t *traceImpl) Serialize() (ser interface{}) {
 
 // New trace.
 func NewTrace(description string) Trace {
-	return &traceImpl {
+	return &traceImpl{
 		description: description,
-		startTime: time.Now().UTC(),
-		subTraces: make([]Trace, 0),
+		startTime:   time.Now().UTC(),
+		subTraces:   make([]Trace, 0),
 	}
 }
 
@@ -138,10 +138,10 @@ func DeserializeTrace(ser interface{}) (t Trace, err error) {
 		}
 	}
 
-	return &traceImpl {
+	return &traceImpl{
 		description: description,
-		startTime: time.Unix(startTimeNano / nanosecondDivisor, startTimeNano % nanosecondDivisor),
-		endTime: time.Unix(endTimeNano / nanosecondDivisor, endTimeNano % nanosecondDivisor),
-		subTraces: subTraces,
+		startTime:   time.Unix(startTimeNano/nanosecondDivisor, startTimeNano%nanosecondDivisor),
+		endTime:     time.Unix(endTimeNano/nanosecondDivisor, endTimeNano%nanosecondDivisor),
+		subTraces:   subTraces,
 	}, nil
 }

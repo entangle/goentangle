@@ -23,10 +23,10 @@ type ClientConnHandler struct {
 	pendingLock sync.Mutex
 
 	// Closing.
-	closing  bool
+	closing bool
 
 	// Shut down.
-    shutdown bool
+	shutdown bool
 
 	// Lock for state.
 	stateLock sync.Mutex
@@ -128,7 +128,7 @@ func (h *ClientConnHandler) Call(method string, args []interface{}, notify bool,
 
 	// Wait for the response.
 	defer close(done)
-	if resp = <- done; resp == nil {
+	if resp = <-done; resp == nil {
 		err = ErrShutdown
 		return
 	}

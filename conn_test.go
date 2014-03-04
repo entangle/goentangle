@@ -382,7 +382,7 @@ func TestConnSendNotificationReceive(t *testing.T) {
 
 // Test RespondException and subsequent Receive.
 func TestConnRespondExceptionReceive(t *testing.T) {
-	for _, trace := range []Trace {
+	for _, trace := range []Trace{
 		nil,
 		NewTrace("Test"),
 	} {
@@ -398,7 +398,7 @@ func TestConnRespondExceptionReceive(t *testing.T) {
 
 // Test RespondResponse and subsequent Receive.
 func TestConnRespondResponseReceive(t *testing.T) {
-	for _, trace := range []Trace {
+	for _, trace := range []Trace{
 		nil,
 		NewTrace("Test"),
 	} {
