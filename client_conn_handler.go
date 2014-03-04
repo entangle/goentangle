@@ -114,6 +114,11 @@ func (h *ClientConnHandler) Call(method string, args []interface{}, notify bool,
 		return
 	}
 
+	if notify {
+		h.pendingLock.Unlock()
+		return
+	}
+
 	// Allocate a channel for awaiting the response, update the pending table
 	// and unlock.
 	done := make(chan Message, 1)
