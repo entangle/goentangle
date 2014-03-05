@@ -225,14 +225,14 @@ func testConnSendNotificationReceive(t *testing.T, method string, arguments []in
 	}
 }
 
-func testConnRespondExceptionReceive(t *testing.T, exception error, trace Trace) {
+func testConnRaiseExceptionReceive(t *testing.T, exception error, trace Trace) {
 	clientConn, serverConn := newTestingConnPipe()
 	defer clientConn.Close()
 	defer serverConn.Close()
 
 	sentMessageId := MessageId(123)
 
-	err := serverConn.RespondException(exception, &RequestMessage{
+	err := serverConn.RaiseException(exception, &RequestMessage{
 		messageId: sentMessageId,
 	}, trace)
 	if err != nil {
@@ -286,14 +286,14 @@ func testConnRespondExceptionReceive(t *testing.T, exception error, trace Trace)
 	}
 }
 
-func testConnRespondResponseReceive(t *testing.T, result interface{}, trace Trace) {
+func testConnRespondReceive(t *testing.T, result interface{}, trace Trace) {
 	clientConn, serverConn := newTestingConnPipe()
 	defer clientConn.Close()
 	defer serverConn.Close()
 
 	sentMessageId := MessageId(123)
 
-	err := serverConn.RespondResponse(result, &RequestMessage{
+	err := serverConn.Respond(result, &RequestMessage{
 		messageId: sentMessageId,
 	}, trace)
 	if err != nil {
@@ -380,32 +380,65 @@ func TestConnSendNotificationReceive(t *testing.T) {
 	})
 }
 
-// Test RespondException and subsequent Receive.
-func TestConnRespondExceptionReceive(t *testing.T) {
+// Test RaiseException and subsequent Receive.
+func TestConnRaiseExceptionReceive(t *testing.T) {
 	for _, trace := range []Trace{
 		nil,
 		NewTrace("Test"),
 	} {
 		// Test with non-Entangle error.
-		testConnRespondExceptionReceive(t, errors.New("non-entangle error"), trace)
+		testConnRaiseExceptionReceive(t, errors.New("non-entangle error"), trace)
 
 		// Test with Entangle error.
 		def := NewExceptionDefinition("testing", "TestError")
 
-		testConnRespondExceptionReceive(t, def.New("Something went awry"), trace)
+		testConnRaiseExceptionReceive(t, def.New("Something went awry"), trace)
 	}
 }
 
-// Test RespondResponse and subsequent Receive.
-func TestConnRespondResponseReceive(t *testing.T) {
+// Test Respond and subsequent Receive.
+func TestConnRespondReceive(t *testing.T) {
 	for _, trace := range []Trace{
 		nil,
 		NewTrace("Test"),
 	} {
-		testConnRespondResponseReceive(t, nil, trace)
-		testConnRespondResponseReceive(t, []interface{}{}, trace)
-		testConnRespondResponseReceive(t, "Test", trace)
-		testConnRespondResponseReceive(t, uint64(12346), trace)
-		testConnRespondResponseReceive(t, []interface{}{"Hello", int64(123)}, trace)
+		testConnRespondReceive(t, nil, trace)
+		testConnRespondReceive(t, []interface{}{}, trace)
+		testConnRespondReceive(t, "Test", trace)
+		testConnRespondReceive(t, uint64(12346), trace)
+		testConnRespondReceive(t, []interface{}{"Hello", int64(123)}, trace)
+	}
+}
+
+// Test AcknowledgeNotification and subsequent Receive.
+func TestConnAcknowledgeNotificationReceive(t *testing.T) {
+	clientConn, serverConn := newTestingConnPipe()
+	defer clientConn.Close()
+	defer serverConn.Close()
+
+	sentMessageId := MessageId(123)
+
+	err := serverConn.AcknowledgeNotification(&RequestMessage{
+		messageId: sentMessageId,
+	})
+	if err != nil {
+		t.Errorf("Error sending exception response: %v", err)
+		return
+	}
+
+	msg, err := clientConn.Receive()
+	if err != nil {
+		t.Errorf("Error receiving message: %v", err)
+		return
+	}
+
+	if msg.MessageId() != sentMessageId {
+		t.Errorf("Sent and received message IDs do not match: %d sent, %d received", sentMessageId, msg.MessageId())
+		return
+	}
+
+	if _, ok := msg.(*NotificationAcknowledgementMessage); !ok {
+		t.Errorf("Received message is not a notification acknowledgement")
+		return
 	}
 }

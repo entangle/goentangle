@@ -190,6 +190,16 @@ func (c *Conn) deserializeMessage(opcode Opcode, messageId MessageId, messageDat
 			Trace:       trace,
 		}
 
+	case NotificationAcknowledgementOpcode:
+		if len(messageData) != 0 {
+			err = ErrBadMessage
+			return
+		}
+
+		msg = &NotificationAcknowledgementMessage{
+			messageId:   messageId,
+		}
+
 	case CompressedMessageOpcode:
 		if len(messageData) != 2 {
 			err = ErrBadMessage
@@ -369,8 +379,8 @@ func (c *Conn) SendNotification(method string, arguments []interface{}) (Message
 	})
 }
 
-// Respond with an exception.
-func (c *Conn) RespondException(exception error, responseTo Message, trace Trace) error {
+// Raise an exception.
+func (c *Conn) RaiseException(exception error, responseTo Message, trace Trace) error {
 	// Transform the error into an Entangle error if it is not already.
 	eErr, ok := exception.(Exception)
 
@@ -388,12 +398,20 @@ func (c *Conn) RespondException(exception error, responseTo Message, trace Trace
 	})
 }
 
-// Respond with a response.
-func (c *Conn) RespondResponse(result interface{}, responseTo Message, trace Trace) error {
+// Send a response.
+func (c *Conn) Respond(result interface{}, responseTo Message, trace Trace) error {
 	// Create and send the response.
 	return c.send(&ResponseMessage{
 		messageId: responseTo.MessageId(),
 		Result:    result,
 		Trace:     trace,
+	})
+}
+
+// Acknowledge a notification.
+func (c *Conn) AcknowledgeNotification(responseTo Message) error {
+	// Create and send the response.
+	return c.send(&NotificationAcknowledgementMessage{
+		messageId: responseTo.MessageId(),
 	})
 }

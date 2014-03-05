@@ -21,6 +21,9 @@ const (
 	// Exception opcode.
 	ExceptionOpcode
 
+	// Notification acknowledgement opcode.
+	NotificationAcknowledgementOpcode
+
 	// Compressed message opcode.
 	CompressedMessageOpcode = 0x7f
 )
@@ -30,6 +33,7 @@ var opcodeNames = map[Opcode]string{
 	RequestOpcode:      "request",
 	NotificationOpcode: "notification",
 	ResponseOpcode:     "response",
+	NotificationAcknowledgementOpcode: "notification acknowledgement",
 	ExceptionOpcode:    "exception",
 }
 
@@ -43,7 +47,7 @@ func (o Opcode) String() string {
 
 // Test if an opcode is valid.
 func (o Opcode) Valid() bool {
-	return o == CompressedMessageOpcode || o >= RequestOpcode && o <= ExceptionOpcode
+	return o == CompressedMessageOpcode || o >= RequestOpcode && o <= NotificationAcknowledgementOpcode
 }
 
 // Parse an opcode.

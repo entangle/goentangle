@@ -130,3 +130,20 @@ func (m *ExceptionMessage) Serialize() []interface{} {
 		serTrace,
 	}
 }
+
+// Notification acknowledgement message.
+type NotificationAcknowledgementMessage struct {
+	// Message ID.
+	messageId MessageId
+}
+
+func (m *NotificationAcknowledgementMessage) MessageId() MessageId {
+	return m.messageId
+}
+
+func (m *NotificationAcknowledgementMessage) Serialize() []interface{} {
+	return []interface{}{
+		NotificationAcknowledgementOpcode,
+		m.messageId,
+	}
+}
