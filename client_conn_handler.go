@@ -47,7 +47,7 @@ func (h *ClientConnHandler) receive() {
 		ignore := true
 
 		switch msg.(type) {
-		case *ResponseMessage, *ExceptionMessage:
+		case *ResponseMessage, *ExceptionMessage, *NotificationAcknowledgementMessage:
 			ignore = false
 		}
 
@@ -111,11 +111,6 @@ func (h *ClientConnHandler) Call(method string, args []interface{}, notify bool,
 			err = ErrShutdown
 		}
 
-		h.pendingLock.Unlock()
-		return
-	}
-
-	if notify {
 		h.pendingLock.Unlock()
 		return
 	}
