@@ -9,6 +9,9 @@ var (
 	ErrDeserializationError = errors.New("deserialization error")
 )
 
+// Deserialize a string.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeString(input interface{}) (string, error) {
 	switch input.(type) {
 	case string:
@@ -18,6 +21,9 @@ func DeserializeString(input interface{}) (string, error) {
 	return "", ErrDeserializationError
 }
 
+// Deserialize a boolean.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeBool(input interface{}) (bool, error) {
 	switch input.(type) {
 	case bool:
@@ -27,6 +33,9 @@ func DeserializeBool(input interface{}) (bool, error) {
 	return false, ErrDeserializationError
 }
 
+// Deserialize a binary.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeBinary(input interface{}) ([]byte, error) {
 	switch input.(type) {
 	case []byte:
@@ -41,6 +50,9 @@ func DeserializeBinary(input interface{}) ([]byte, error) {
 	return nil, ErrDeserializationError
 }
 
+// Deserialize a signed 8-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeInt8(input interface{}) (int8, error) {
 	switch input.(type) {
 	case int8:
@@ -95,6 +107,9 @@ func DeserializeInt8(input interface{}) (int8, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize a signed 16-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeInt16(input interface{}) (int16, error) {
 	switch input.(type) {
 	case int8:
@@ -145,6 +160,9 @@ func DeserializeInt16(input interface{}) (int16, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize a signed 32-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeInt32(input interface{}) (int32, error) {
 	switch input.(type) {
 	case int8:
@@ -191,6 +209,9 @@ func DeserializeInt32(input interface{}) (int32, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize a signed 64-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeInt64(input interface{}) (int64, error) {
 	switch input.(type) {
 	case int8:
@@ -211,7 +232,7 @@ func DeserializeInt64(input interface{}) (int64, error) {
 		}
 
 	case uint8:
-		return int64(input.(uint64)), nil
+		return int64(input.(uint8)), nil
 
 	case uint16:
 		return int64(input.(uint16)), nil
@@ -233,6 +254,9 @@ func DeserializeInt64(input interface{}) (int64, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize an unsigned 8-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeUint8(input interface{}) (uint8, error) {
 	switch input.(type) {
 	case int8:
@@ -289,6 +313,9 @@ func DeserializeUint8(input interface{}) (uint8, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize an unsigned 16-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeUint16(input interface{}) (uint16, error) {
 	switch input.(type) {
 	case int8:
@@ -341,6 +368,9 @@ func DeserializeUint16(input interface{}) (uint16, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize an unsigned 32-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeUint32(input interface{}) (uint32, error) {
 	switch input.(type) {
 	case int8:
@@ -391,6 +421,9 @@ func DeserializeUint32(input interface{}) (uint32, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize an unsigned 64-bit integer.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeUint64(input interface{}) (uint64, error) {
 	switch input.(type) {
 	case int8:
@@ -439,6 +472,9 @@ func DeserializeUint64(input interface{}) (uint64, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize a 64-bit floating point number.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeFloat64(input interface{}) (float64, error) {
 	switch input.(type) {
 	case float32:
@@ -451,6 +487,9 @@ func DeserializeFloat64(input interface{}) (float64, error) {
 	return 0, ErrDeserializationError
 }
 
+// Deserialize a 32-bit floating point number.
+//
+// Returns ErrDeserializationError if deserialization failed.
 func DeserializeFloat32(input interface{}) (float32, error) {
 	switch input.(type) {
 	case float32:
