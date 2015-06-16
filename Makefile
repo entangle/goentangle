@@ -1,7 +1,7 @@
 SOURCE := $(wildcard *.go)
 LIBRARIES := \
 	github.com/vmihailenco/msgpack \
-	code.google.com/p/snappy-go/snappy
+	github.com/golang/snappy/snappy
 LIBRARIES_DIRS := $(addprefix src/, $(LIBRARIES))
 
 export GOPATH=$(shell pwd)

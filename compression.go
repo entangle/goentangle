@@ -1,7 +1,7 @@
 package goentangle
 
 import (
-	"code.google.com/p/snappy-go/snappy"
+	"github.com/golang/snappy/snappy"
 	"fmt"
 )
 
